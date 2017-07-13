@@ -65,6 +65,8 @@ def getHost(url):
 def getSrc(src):
     if src.startswith('//'):
         src = "http://" + src[2:]
+    if src.find("qrcode") > 0 or src.find('QR') > 0:
+        return None
     return src
     pass
 
@@ -94,7 +96,7 @@ def getHtmlInfo(url):
                     img_src = str(image.attrs['src'])
                     img_src = getSrc(img_src)
 
-                if img_src is not None and img_src != '' and img_src.find('qrcode') < 0:
+                if img_src is not None and img_src != '':
                     image_url = img_src
                     break
 
@@ -106,13 +108,14 @@ def getHtmlInfo(url):
                 img_src = str(image.attrs['src'])
                 img_src = getSrc(img_src)
 
-                if img_src is None and len((img_src)) >= 0:
+                if img_src is not None and len(img_src) >= 0:
                     #     temp = img_src
                     #     continue
                     # else:
                     image_url = img_src
+                    break
                 else:
-                    if img_src.find('logo') > 0 or img_src.find('icon') > 0:
+                    if img_src is not None and (img_src.find('logo') > 0 or img_src.find('icon') > 0):
                         image_url = img_src
                         break
 
@@ -185,9 +188,7 @@ def del_none(d):
 
 
 if __name__ == '__main__':
-    url = 'http://36kr.com/p/5083510.html'
-    url = 'https://www.zhihu.com/'
-    # url = 'http://baidu.com'
+    url = 'http://baidu.com'
 
     print getUrlInfoJson(url)
 
