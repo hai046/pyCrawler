@@ -12,8 +12,6 @@ from bs4 import BeautifulSoup
 import logging
 from logging.handlers import TimedRotatingFileHandler
 
-reload(sys)
-sys.setdefaultencoding("utf-8")
 # 2017/7/6 17:28
 __author__ = 'haizhu'
 
@@ -78,7 +76,8 @@ def getHtmlInfo(url):
         title_desc = title.text
 
     images = soup.find_all('img')
-    print images
+    print
+    images
 
     image_url = None
 
@@ -178,14 +177,10 @@ def del_none(d):
 
 if __name__ == '__main__':
     url = 'https://www.jianshu.com/'
-    url = 'http://blog.csdn.net/xichenguan/article/details/41485447'
-    # url = 'http://geek.csdn.net/news/detail/209764'
-    # url = 'https://www.baidu.com/'
-    # url = 'https://mp.weixin.qq.com/s/U_zx7IOKpx0RhPpFXw5Rgg'
 
     logging.info('start html crawler service……')
     url, title, image = getHtmlInfo(url)
-    print 'url=', url, '\ntitle=', title, '\nimg=', image
+    print('url=', url, '\ntitle=', title, '\nimg=', image)
 
     if True and len(sys.argv) == 1:
         http_server = HTTPServer(('127.0.0.1', 8098), HtmlHTTPHandle)
