@@ -47,7 +47,7 @@ def download(url):
                           # 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1'
                           )]
     f = opener.open(url)
-    s = f.read()
+    s = f.read(size=102400)  # 最大100k
     f.close()
     return s
 
@@ -62,9 +62,11 @@ def getHost(url):
         return url
 
 
-def getSrc(src):
+def getSrc(src, domain=''):
     if src.startswith('//'):
         src = "http://" + src[2:]
+    elif src.startswith('/'):
+        src = url + src
     if src.find("qrcode") > 0 or src.find('QR') > 0:
         return None
     return src
@@ -94,7 +96,7 @@ def getHtmlInfo(url):
                     img_src = str(image.attrs['data-src'])
                 elif image.attrs.has_key('src'):
                     img_src = str(image.attrs['src'])
-                    img_src = getSrc(img_src)
+                    img_src = getSrc(img_src, domain=url)
 
                 if img_src is not None and img_src != '':
                     image_url = img_src
@@ -106,7 +108,7 @@ def getHtmlInfo(url):
                 if not image.attrs.has_key('src'):
                     continue
                 img_src = str(image.attrs['src'])
-                img_src = getSrc(img_src)
+                img_src = getSrc(img_src, url)
 
                 if img_src is not None and len(img_src) >= 0:
                     #     temp = img_src
@@ -188,7 +190,7 @@ def del_none(d):
 
 
 if __name__ == '__main__':
-    url = 'http://baidu.com'
+    url = 'https://mp.weixin.qq.com/s/U_zx7IOKpx0RhPpFXw5Rgg'
 
     print getUrlInfoJson(url)
 
