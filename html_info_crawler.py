@@ -15,6 +15,9 @@ from logging.handlers import TimedRotatingFileHandler
 # 2017/7/6 17:28
 __author__ = 'haizhu'
 
+reload(sys)
+sys.setdefaultencoding("utf-8")
+
 LOG_HOME = '/data/log/jiemo-html'
 
 if not os.path.exists(LOG_HOME):
@@ -76,51 +79,80 @@ def getHtmlInfo(url):
         title_desc = title.text
 
     images = soup.find_all('img')
-    print
-    images
 
     image_url = None
-
+    img_src = None
     temp = None
 
     if images is not None and len(images) > 0:
 
-        if url.find('mp.weixin.qq.com'):
+        if url.find('mp.weixin.qq.com') >= 0:
             for image in images:
                 if image.attrs.has_key('data-src'):
-                    src = str(image.attrs['data-src'])
+                    img_src = str(image.attrs['data-src'])
                 elif image.attrs.has_key('src'):
-                    src = str(image.attrs['src'])
-                    src = getSrc(src)
+                    img_src = str(image.attrs['src'])
+                    img_src = getSrc(img_src)
 
-                ##src必须不是null，不能是二维码
-                if src is not None and src != '' and src.find('qrcode') < 0:
-                    image_url = src
+                if img_src is not None and img_src != '' and img_src.find('qrcode') < 0:
+                    image_url = img_src
                     break
 
 
         else:
             for image in images:
-                src = str(image.attrs['src'])
-                if temp is None and src.lower().find('logo') >= 0:
-                    temp = src
+                if not image.attrs.has_key('src'):
                     continue
+                img_src = str(image.attrs['src'])
+                img_src = getSrc(img_src)
 
-                src = getSrc(src)
-                # print src, image.attrs
-                image_url = src
-                break
+                if img_src is None and len((img_src)) >= 0:
+                    #     temp = img_src
+                    #     continue
+                    # else:
+                    image_url = img_src
+                else:
+                    if img_src.find('logo') > 0 or img_src.find('icon') > 0:
+                        image_url = img_src
+                        break
 
     if image_url is None and temp is not None:
-
         if temp.startswith('//'):
-            src = "http://" + temp[2:]
-            image_url = src
+            img_src = "http://" + temp[2:]
+            image_url = img_src
 
     return url, title_desc, image_url
 
 
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
+
+
+def getUrlInfoJson(url):
+    start = int(time.time() * 1000)
+    url, title, image = getHtmlInfo(url)
+
+    logging.info('url={0} title={1} img={2}'.format(url, title, image))
+
+    end = int(time.time() * 1000)
+    cost = end - start
+
+    result_dic = {
+        'meta': {
+            'metaCode': 'Success',
+            'cost': cost,
+            'timestamp': end,
+            'postname': 'python',
+            'code': 1
+
+        },
+        'data': {
+            'image': image,
+            'title': title
+        }
+    }
+
+    return json.dumps(del_none(result_dic))
+    pass
 
 
 class HtmlHTTPHandle(BaseHTTPRequestHandler):
@@ -134,30 +166,7 @@ class HtmlHTTPHandle(BaseHTTPRequestHandler):
                 buf = '{"meta":{"metaCode":"PrintErrInfo","code":50000,"errInfo":"缺少url参数"}}'
             else:
                 if len(url) == 1:
-                    start = int(time.time() * 1000)
-                    url, title, image = getHtmlInfo(url[0])
-
-                    logging.info('url={0} title={1},img={2}'.format(url, title, image))
-
-                    end = int(time.time() * 1000)
-                    cost = end - start
-
-                    result_dic = {
-                        'meta': {
-                            'metaCode': 'Success',
-                            'cost': cost,
-                            'timestamp': end,
-                            'postname': 'python',
-                            'code': 1
-
-                        },
-                        'data': {
-                            'image': image,
-                            'title': title
-                        }
-                    }
-
-                    buf = json.dumps(del_none(result_dic))
+                    buf = getUrlInfoJson(url[0])
             self.send_response(200)
             self.send_header("Content-Type", "application/json;charset=UTF-8")
             self.end_headers()
@@ -172,16 +181,17 @@ def del_none(d):
             del d[key]
         elif isinstance(value, dict):
             del_none(value)
-    return d  # For convenience
+    return d
 
 
 if __name__ == '__main__':
-    url = 'https://www.jianshu.com/'
+    url = 'http://36kr.com/p/5083510.html'
+    url = 'https://www.zhihu.com/'
+    # url = 'http://baidu.com'
 
-    logging.info('start html crawler service……')
-    url, title, image = getHtmlInfo(url)
-    print('url=', url, '\ntitle=', title, '\nimg=', image)
+    print getUrlInfoJson(url)
 
     if True and len(sys.argv) == 1:
+        logging.info('start html crawler service……')
         http_server = HTTPServer(('127.0.0.1', 8098), HtmlHTTPHandle)
         http_server.serve_forever()
