@@ -78,7 +78,7 @@ def getSrc(src, domain=''):
 def getHtmlInfo(url):
     if url.lower().startswith('https'):
         url = "http" + url[5:]
-    soup = BeautifulSoup(download(url), "html5lib")
+    soup = BeautifulSoup(download(url))
     title_desc = None
     title = soup.title
     if title is not None:
