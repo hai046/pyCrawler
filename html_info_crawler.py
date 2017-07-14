@@ -94,9 +94,9 @@ def getHtmlInfo(url):
 
         if url.find('mp.weixin.qq.com') >= 0:
             for image in images:
-                if image.attrs.has_key('data-src'):
+                if image.attrs.get('data-src') is not None:
                     img_src = str(image.attrs['data-src'])
-                elif image.attrs.has_key('src'):
+                elif image.attrs.get('src') is not None:
                     img_src = str(image.attrs['src'])
                     img_src = getSrc(img_src, domain=url)
 
@@ -108,7 +108,7 @@ def getHtmlInfo(url):
         else:
             for image in images:
 
-                img_src = str(image.attrs['src'])
+                img_src = image.attrs.get('src')
                 img_src = getSrc(img_src, url)
 
                 if img_src is not None and len(img_src) >= 0:
@@ -192,6 +192,7 @@ class ThreadingHttpServer(ThreadingMixIn, HTTPServer):
 
 
 if __name__ == '__main__':
+
     url = 'http://baidu.com'
 
     print(getUrlInfoJson(url))
