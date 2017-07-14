@@ -47,15 +47,16 @@ def download(url):
                    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36'
                # 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1'
                }
-    req = request.Request(url, headers=headers)
     page = None
+    err_info = None
     try:
+        req = request.Request(url, headers=headers)
         page = request.urlopen(req, timeout=10).read()
         page = page.decode('utf-8')
-    except URLError as err:
-        print(err)
+    except (URLError, ValueError, IOError, Exception) as err:
+        err_info = str(err)
     finally:
-        return page
+        return page, err_info
 
 
 def getHost(url):
@@ -84,9 +85,11 @@ def getSrc(src, domain=''):
 def getHtmlInfo(url):
     if url.lower().startswith('https'):
         url = "http" + url[5:]
-    context = download(url)
+    context, err = download(url)
+    if err is not None:
+        return None, None, None, str(err)
     if context is None:
-        return None, None, None
+        return None, None, None, "html is null"
     soup = BeautifulSoup(context)
     title_desc = None
     title = soup.title
@@ -136,12 +139,12 @@ def getHtmlInfo(url):
             img_src = "http://" + temp[2:]
             image_url = img_src
 
-    return url, title_desc, image_url
+    return url, title_desc, image_url, None
 
 
 def getUrlInfoJson(url):
     start = int(time.time() * 1000)
-    url, title, image = getHtmlInfo(url)
+    url, title, image, err = getHtmlInfo(url)
 
     logging.info('url={0} title={1} img={2}'.format(url, title, image))
 
@@ -154,8 +157,8 @@ def getUrlInfoJson(url):
             'cost': cost,
             'timestamp': end,
             'postname': 'python',
-            'code': 1
-
+            'code': 1 if err is not None else 5000,
+            'errInfo': err
         },
         'data': {
             'image': image,
@@ -202,10 +205,8 @@ class ThreadingHttpServer(ThreadingMixIn, HTTPServer):
 
 if __name__ == '__main__':
 
-    url = 'http://baidu.com'
-
+    url = 'baidu.com'
     print(getUrlInfoJson(url))
-
     if True and len(sys.argv) == 1:
         logging.info('start html crawler service……')
         http_server = ThreadingHttpServer(('127.0.0.1', 8098), HtmlHTTPHandle)
