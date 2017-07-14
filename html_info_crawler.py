@@ -157,7 +157,7 @@ def getUrlInfoJson(url):
             'cost': cost,
             'timestamp': end,
             'postname': 'python',
-            'code': 1 if err is not None else 5000,
+            'code': 1 if err is None else 5000,
             'errInfo': err
         },
         'data': {
