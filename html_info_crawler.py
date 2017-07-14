@@ -9,6 +9,7 @@ from http.server import HTTPServer
 from logging.handlers import TimedRotatingFileHandler
 from socketserver import ThreadingMixIn
 from urllib import request, parse
+from urllib.error import URLError
 
 from bs4 import BeautifulSoup
 
@@ -47,9 +48,14 @@ def download(url):
                # 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1'
                }
     req = request.Request(url, headers=headers)
-    page = request.urlopen(req, timeout=5).read()
-    page = page.decode('utf-8')
-    return page
+    page = None
+    try:
+        page = request.urlopen(req, timeout=5).read()
+        page = page.decode('utf-8')
+    except URLError as err:
+        print(err)
+    finally:
+        return page
 
 
 def getHost(url):
@@ -78,7 +84,10 @@ def getSrc(src, domain=''):
 def getHtmlInfo(url):
     if url.lower().startswith('https'):
         url = "http" + url[5:]
-    soup = BeautifulSoup(download(url))
+    context = download(url)
+    if context is None:
+        return None, None, None
+    soup = BeautifulSoup(context)
     title_desc = None
     title = soup.title
     if title is not None:
@@ -173,13 +182,13 @@ class HtmlHTTPHandle(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-Type", "application/json;charset=UTF-8")
             self.end_headers()
-            self.wfile.write(buf)
+            self.wfile.write(bytes(buf, 'UTF-8'))
         else:
             self.send_response(403)
 
 
 def del_none(d):
-    for key, value in d.items():
+    for key, value in d.copy().items():
         if value is None or value == '':
             del d[key]
         elif isinstance(value, dict):
