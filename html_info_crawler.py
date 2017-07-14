@@ -50,7 +50,7 @@ def download(url):
     req = request.Request(url, headers=headers)
     page = None
     try:
-        page = request.urlopen(req, timeout=5).read()
+        page = request.urlopen(req, timeout=10).read()
         page = page.decode('utf-8')
     except URLError as err:
         print(err)
