@@ -12,6 +12,10 @@ from urllib import request, parse
 
 from bs4 import BeautifulSoup
 
+# yum install python34-pip
+# pip3.4  install bs4
+
+
 # 2017/7/6 17:28
 __author__ = 'haizhu'
 
