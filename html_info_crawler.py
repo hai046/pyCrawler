@@ -85,6 +85,8 @@ def getSrc(src, domain=''):
 def getHtmlInfo(url):
     if url.lower().startswith('https'):
         url = "http" + url[5:]
+    elif url.lower().startswith('www'):
+        url = "http://" + url
     context, err = download(url)
     if err is not None:
         return None, None, None, str(err)
@@ -207,7 +209,6 @@ if __name__ == '__main__':
 
     url = 'http://baidu.com'
 
-    print(parse.urldefrag(url))
     print(getUrlInfoJson(url))
     if True and len(sys.argv) == 1:
         logging.info('start html crawler service……')
