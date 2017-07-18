@@ -51,8 +51,8 @@ def download(url):
     err_info = None
     try:
         req = request.Request(url, headers=headers)
-        page = request.urlopen(req, timeout=10).read()
-        page = page.decode('utf-8')
+        response = request.urlopen(req, timeout=10)
+        page = response.read()
     except (URLError, ValueError, IOError, Exception) as err:
         err_info = str(err)
     finally:
@@ -205,7 +205,9 @@ class ThreadingHttpServer(ThreadingMixIn, HTTPServer):
 
 if __name__ == '__main__':
 
-    url = 'baidu.com'
+    url = 'http://baidu.com'
+
+    print(parse.urldefrag(url))
     print(getUrlInfoJson(url))
     if True and len(sys.argv) == 1:
         logging.info('start html crawler service……')
