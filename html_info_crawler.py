@@ -96,7 +96,8 @@ def getHtmlInfo(url):
         return url, None, None, str(err)
     if context is None:
         return url, None, None, "html is null"
-    soup = BeautifulSoup(context)
+    # https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-a-parser
+    soup = BeautifulSoup(context, 'lxml')
     title_desc = None
     title = soup.title
     if title is not None:
