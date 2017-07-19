@@ -83,9 +83,7 @@ def getSrc(src, domain=''):
 
 
 def getHtmlInfo(url):
-    if url.lower().startswith('https'):
-        url = "http" + url[5:]
-    elif url.lower().startswith('www'):
+    if url.lower().startswith('www'):
         url = "http://" + url
     context, err = download(url)
     if err is not None:
