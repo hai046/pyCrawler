@@ -10,7 +10,7 @@ from logging.handlers import TimedRotatingFileHandler
 from socketserver import ThreadingMixIn
 from urllib import request, parse
 from urllib.error import URLError
-
+import collections
 from bs4 import BeautifulSoup
 
 # yum install python34-pip
@@ -72,6 +72,8 @@ def getHost(url):
 def getSrc(src, domain=''):
     if src is None or len(src) < 1:
         return None
+    src = src.replace('"', '')
+    src = src.replace('\\', '')
     if src.startswith('//'):
         src = "http://" + src[2:]
     elif src.startswith('/'):
@@ -92,7 +94,7 @@ def getHtmlInfo(url):
         return url, None, None, str(err)
     if context is None:
         return url, None, None, "html is null"
-    soup = BeautifulSoup(context)
+    soup = BeautifulSoup(context, 'lxml')
     title_desc = None
     title = soup.title
     if title is not None:
@@ -218,10 +220,14 @@ def killByPort(port):
     pass
 
 
+class LRUCache(collections.OrderedDict):
+    pass
+
+
 if __name__ == '__main__':
     port = 8098
     killByPort(port)
-    url = 'http://baidu.com'
+    url = 'https://zhuanlan.zhihu.com/p/27933794'
 
     print(getUrlInfoJson(url))
     if True and len(sys.argv) == 1:
