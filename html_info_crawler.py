@@ -94,7 +94,7 @@ def getHtmlInfo(url):
         return url, None, None, str(err)
     if context is None:
         return url, None, None, "html is null"
-    soup = BeautifulSoup(context, 'lxml')
+    soup = BeautifulSoup(context, 'html.parser')
     title_desc = None
     title = soup.title
     if title is not None:
