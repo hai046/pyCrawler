@@ -86,12 +86,12 @@ def getHtmlInfo(url):
     if url.lower().startswith('www'):
         url = "http://" + url
     elif not url.lower().startswith("http"):
-        return None, None, None, "链接地址必须以http或https开头"
+        return url, None, None, "链接地址必须以http或https开头"
     context, err = download(url)
     if err is not None:
-        return None, None, None, str(err)
+        return url, None, None, str(err)
     if context is None:
-        return None, None, None, "html is null"
+        return url, None, None, "html is null"
     soup = BeautifulSoup(context)
     title_desc = None
     title = soup.title
