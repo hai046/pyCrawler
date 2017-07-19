@@ -148,6 +148,9 @@ def getUrlInfoJson(url):
     start = int(time.time() * 1000)
     url, title, image, err = getHtmlInfo(url)
 
+    if url is not None:
+        url = str(url).rstrip()
+
     logging.info('url={0} title={1} img={2}'.format(url, title, image))
 
     end = int(time.time() * 1000)
