@@ -72,6 +72,8 @@ def getHost(url):
 def getSrc(src, domain=''):
     if src is None or len(src) < 1:
         return None
+    if src.find('(') > 0:
+        return None
     src = src.replace('"', '')
     src = src.replace('\\', '')
     if src.startswith('//'):
@@ -94,7 +96,7 @@ def getHtmlInfo(url):
         return url, None, None, str(err)
     if context is None:
         return url, None, None, "html is null"
-    soup = BeautifulSoup(context, 'html.parser')
+    soup = BeautifulSoup(context)
     title_desc = None
     title = soup.title
     if title is not None:
@@ -227,7 +229,7 @@ class LRUCache(collections.OrderedDict):
 if __name__ == '__main__':
     port = 8098
     killByPort(port)
-    url = 'https://zhuanlan.zhihu.com/p/27933794'
+    url = 'https://www.yahoo.com/?width=1080&p=6SUS3I1Taa4VZHNsBF8cv4mcjMOPsZZyuSGvWYyxSPMTLXPjzWTcERluyboXB3sl&appver=1.3.90&from=singlemessage title=Yahoo'
 
     print(getUrlInfoJson(url))
     if True and len(sys.argv) == 1:
