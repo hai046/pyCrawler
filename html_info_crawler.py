@@ -218,7 +218,6 @@ def killByPort(port):
 if __name__ == '__main__':
     port = 8098
     killByPort(port)
-    exit(0)
     url = 'http://baidu.com'
 
     print(getUrlInfoJson(url))
