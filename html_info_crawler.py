@@ -205,12 +205,24 @@ class ThreadingHttpServer(ThreadingMixIn, HTTPServer):
     pass
 
 
-if __name__ == '__main__':
+def killByPort(port):
+    cmd = "netstat -apn|grep \":" + str(port) + " \"|grep LISTEN|awk '{print $7}'|awk -F \"/\" '{print $1}'"
+    print(cmd)
+    pid = os.popen(cmd).read()
+    if pid is not None and len(pid) > 0:
+        os.popen("kill -TERM " + pid).read()
+        time.sleep(2)
+    pass
 
+
+if __name__ == '__main__':
+    port = 8098
+    killByPort(port)
+    exit(0)
     url = 'http://baidu.com'
 
     print(getUrlInfoJson(url))
     if True and len(sys.argv) == 1:
         logging.info('start html crawler service……')
-        http_server = ThreadingHttpServer(('127.0.0.1', 8098), HtmlHTTPHandle)
+        http_server = ThreadingHttpServer(('127.0.0.1', port), HtmlHTTPHandle)
         http_server.serve_forever()
