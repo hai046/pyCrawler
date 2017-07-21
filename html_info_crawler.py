@@ -230,8 +230,9 @@ class LRUCache(collections.OrderedDict):
 if __name__ == '__main__':
     port = 8098
     killByPort(port)
-    url = 'https://www.yahoo.com/?width=1080&p=6SUS3I1Taa4VZHNsBF8cv4mcjMOPsZZyuSGvWYyxSPMTLXPjzWTcERluyboXB3sl&appver=1.3.90&from=singlemessage title=Yahoo'
-
+    url = 'https://mlive27.inke.cn/share/live.html?uid=107607629&liveid=1500455777864710&ctime=1500455777'
+    url = 'https://zhuanlan.zhihu.com/p/27929149?utm_source=qq&utm_medium=social'
+    url = 'https://fir.im/jmnei'
     print(getUrlInfoJson(url))
     if True and len(sys.argv) == 1:
         logging.info('start html crawler service……')
