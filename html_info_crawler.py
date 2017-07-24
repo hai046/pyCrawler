@@ -223,8 +223,6 @@ def killByPort(port):
     pass
 
 
-class LRUCache(collections.OrderedDict):
-    pass
 
 
 if __name__ == '__main__':
