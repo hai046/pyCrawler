@@ -223,9 +223,6 @@ def killByPort(port):
     pass
 
 
-
-
-
 if __name__ == '__main__':
     port = 8098
     killByPort(port)
@@ -235,5 +232,5 @@ if __name__ == '__main__':
     print(getUrlInfoJson(url))
     if True and len(sys.argv) == 1:
         logging.info('start html crawler service……')
-        http_server = ThreadingHttpServer(('127.0.0.1', port), HtmlHTTPHandle)
+        http_server = ThreadingHttpServer(('10.45.147.115', port), HtmlHTTPHandle)
         http_server.serve_forever()
