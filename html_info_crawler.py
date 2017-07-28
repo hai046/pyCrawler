@@ -226,17 +226,18 @@ def killByPort(port):
 
 def get_ip():
     ips = os.popen('hostname --all-ip-addresses').read()
-    print(ips)
     for ip in ips.split():
         if str(ip).startswith('10.'):
-            return ip
+            return str(ip)
 
 
 if __name__ == '__main__':
 
     current_ip = get_ip()
     print('current ip %s' % current_ip)
-    exit(0)
+    if current_ip is not None and not current_ip.startswith('10.'):
+        print('get current_ip  failure exit  !!!!!!!!!!!!!!!!!' % current_ip)
+        exit(-1)
 
     port = 8098
     killByPort(port)
