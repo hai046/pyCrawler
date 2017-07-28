@@ -246,6 +246,6 @@ if __name__ == '__main__':
     url = 'https://fir.im/jmnei'
     print(getUrlInfoJson(url))
     if True and len(sys.argv) == 1:
-        logging.info('start html crawler service……')
-        http_server = ThreadingHttpServer(('0.0.0.0', port), HtmlHTTPHandle)
+        logging.info('start html crawler service %s:%d ……' % (current_ip, port))
+        http_server = ThreadingHttpServer((current_ip, port), HtmlHTTPHandle)
         http_server.serve_forever()
