@@ -226,7 +226,8 @@ def killByPort(port):
 
 def get_ip():
     ips = os.popen('hostname --all-ip-addresses').read()
-    for ip in ips:
+    print(ips)
+    for ip in ips.split():
         if str(ip).startswith('10.'):
             return ip
 
