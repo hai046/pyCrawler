@@ -233,7 +233,8 @@ def get_ip():
 
 if __name__ == '__main__':
 
-    get_ip()
+    current_ip = get_ip()
+    print('current ip %s' % current_ip)
     exit(0)
 
     port = 8098
