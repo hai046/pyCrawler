@@ -2,6 +2,7 @@
 import json
 import logging
 import os
+import socket
 import sys
 import time
 from http.server import BaseHTTPRequestHandler
@@ -223,7 +224,18 @@ def killByPort(port):
     pass
 
 
+def get_ip():
+    ips = os.popen('hostname --all-ip-addresses').read()
+    for ip in ips:
+        if str(ip).startswith('10.'):
+            return ip
+
+
 if __name__ == '__main__':
+
+    get_ip()
+    exit(0)
+
     port = 8098
     killByPort(port)
     url = 'https://mlive27.inke.cn/share/live.html?uid=107607629&liveid=1500455777864710&ctime=1500455777'
@@ -232,5 +244,5 @@ if __name__ == '__main__':
     print(getUrlInfoJson(url))
     if True and len(sys.argv) == 1:
         logging.info('start html crawler service……')
-        http_server = ThreadingHttpServer(('10.45.147.115', port), HtmlHTTPHandle)
+        http_server = ThreadingHttpServer(('0.0.0.0', port), HtmlHTTPHandle)
         http_server.serve_forever()
